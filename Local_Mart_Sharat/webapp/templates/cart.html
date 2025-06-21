@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart - LocalMart</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="font-sans bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-sm py-4">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <div class="flex items-center">
+                <a href="{{ url_for('home') }}" class="text-2xl font-bold text-blue-900 flex items-center">
+                    <i class="fas fa-store mr-2"></i> LocalMart
+                </a>
+            </div>
+            <div class="flex items-center w-full max-w-lg mx-4">
+                <form action="{{ url_for('search') }}" method="GET" class="flex w-full">
+                    <input type="text" name="q" placeholder="Search for products..." class="w-full px-4 py-2 border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-900">
+                    <button type="submit" class="bg-blue-900 text-white px-4 py-2 rounded-r-lg hover:bg-blue-800">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
+            </div>
+            <div class="flex items-center space-x-4 relative">
+                <a href="{{ url_for('cart') }}" class="text-gray-700 hover:text-blue-900 relative">
+                    <i class="fas fa-shopping-cart"></i>
+                    {% if cart_count > 0 %}
+                        <span class="absolute -top-2 -right-2 bg-red-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">{{ cart_count }}</span>
+                    {% endif %}
+                </a>
+                <div class="relative">
+                    <button id="user-menu-button" class="text-gray-700 hover:text-blue-900 focus:outline-none">
+                        <i class="fas fa-user"></i>
+                    </button>
+                    <div id="user-menu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10">
+                        {% if session.user_id %}
+                            {% if session.role == 'seller' %}
+                                <a href="{{ url_for('seller_dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Dashboard</a>
+                            {% endif %}
+                            {% if session.role == 'admin' %}
+                                <a href="{{ url_for('admin') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Admin Panel</a>
+                            {% endif %}
+                            <a href="{{ url_for('account') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Account</a>
+                            <a href="{{ url_for('signout') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Logout</a>
+                        {% else %}
+                            <a href="{{ url_for('signin') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Sign In</a>
+                            <a href="{{ url_for('signup') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Sign Up</a>
+                        {% endif %}
+                    </div>
+                </div>
+                <button class="md:hidden text-gray-700">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="container mx-auto px-4 py-4">
+                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+                    {% for message in messages %}
+                        <p>{{ message }}</p>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Cart Section -->
+    <section class="py-12 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-blue-900 mb-8">Your Cart</h2>
+            {% if cart_items %}
+                <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full text-left">
+                            <thead class="bg-blue-900 text-white">
+                                <tr>
+                                    <th class="px-4 py-2">Image</th>
+                                    <th class="px-4 py-2">Product</th>
+                                    <th class="px-4 py-2">Store</th>
+                                    <th class="px-4 py-2">Category</th>
+                                    <th class="px-4 py-2">Price</th>
+                                    <th class="px-4 py-2">Quantity</th>
+                                    <th class="px-4 py-2">Total</th>
+                                    <th class="px-4 py-2">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in cart_items %}
+                                    <tr class="border-t">
+                                        <td class="px-4 py-2">
+                                            <img src="{{ url_for('static', filename='uploads/' + item[3]) }}" alt="{{ item[1] }}" class="w-16 h-16 object-cover rounded">
+                                        </td>
+                                        <td class="px-4 py-2">
+                                            <a href="{{ url_for('product_detail', product_id=item[0]) }}" class="text-blue-900 hover:underline">{{ item[1] }}</a>
+                                        </td>
+                                        <td class="px-4 py-2">{{ item[5] }}</td>
+                                        <td class="px-4 py-2">{{ item[6] }}</td>
+                                        <td class="px-4 py-2">Rs {{ item[2] | round(2) }}</td>
+                                        <td class="px-4 py-2">
+                                            <form method="POST" action="{{ url_for('update_cart', product_id=item[0]) }}" class="flex items-center">
+                                                <button type="submit" name="action" value="decrease" class="bg-gray-200 text-gray-700 px-2 py-1 rounded-l hover:bg-gray-300" {% if item[4] <= 1 %}disabled{% endif %}>-</button>
+                                                <input type="number" name="quantity" value="{{ item[4] }}" min="1" max="{{ item[7] }}" class="w-16 text-center border-t border-b border-gray-200 py-1" readonly>
+                                                <button type="submit" name="action" value="increase" class="bg-gray-200 text-gray-700 px-2 py-1 rounded-r hover:bg-gray-300" {% if item[4] >= item[7] %}disabled{% endif %}>+</button>
+                                            </form>
+                                        </td>
+                                        <td class="px-4 py-2">Rs {{ (item[2] * item[4]) | round(2) }}</td>
+                                        <td class="px-4 py-2">
+                                            <form method="POST" action="{{ url_for('remove_from_cart', product_id=item[0]) }}" onsubmit="return confirm('Are you sure you want to remove this item?');">
+                                                <button type="submit" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 flex items-center">
+                                                    <i class="fas fa-trash mr-1"></i> Remove
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="mt-4 border-t pt-4 text-right">
+                        <p class="text-lg font-semibold text-gray-700">Total: Rs {{ "%.2f" | format(total_price) }}</p>
+                    </div>
+                </div>
+                <div class="text-right space-x-4">
+                    <form method="POST" action="{{ url_for('clear_cart') }}" class="inline" onsubmit="return confirm('Are you sure you want to clear your cart?');">
+                        <button type="submit" class="bg-gray-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-gray-700 transition inline-flex items-center">
+                            <i class="fas fa-trash-alt mr-2"></i> Clear Cart
+                        </button>
+                    </form>
+                    <a href="{{ url_for('checkout') }}" class="bg-blue-900 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-800 transition inline-flex items-center">
+                        <i class="fas fa-check mr-2"></i> Proceed to Checkout
+                    </a>
+                </div>
+            {% else %}
+                <p class="text-center text-gray-600">Your cart is empty. <a href="{{ url_for('home') }}" class="text-blue-900 hover:underline">Shop now!</a></p>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white pt-12 pb-6">
+        <div class="container mx-auto px-4">
+            <div class="border-t border-gray-800 pt-6 text-center">
+                <p class="text-gray-400">© 2025 LocalMart. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript for User Menu -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const userMenuButton = document.getElementById('user-menu-button');
+            const userMenu = document.getElementById('user-menu');
+
+            if (userMenuButton && userMenu) {
+                userMenuButton.addEventListener('click', function() {
+                    userMenu.classList.toggle('hidden');
+                });
+
+                document.addEventListener('click', function(event) {
+                    if (!userMenuButton.contains(event.target) && !userMenu.contains(event.target)) {
+                        userMenu.classList.add('hidden');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

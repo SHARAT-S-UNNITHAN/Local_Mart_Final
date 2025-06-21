@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - LocalMart</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        .fade-in {
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+        .delay-1 { animation-delay: 0.2s; }
+        .delay-2 { animation-delay: 0.4s; }
+        .delay-3 { animation-delay: 0.6s; }
+        .delay-4 { animation-delay: 0.8s; }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .gradient-text {
+            background: linear-gradient(90deg, #4f46e5 0%, #10b981 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #4f46e5 0%, #10b981 100%);
+        }
+        .category-icon {
+            transition: all 0.3s ease;
+        }
+        .category-card:hover .category-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+    </style>
+</head>
+<body class="font-sans bg-gray-50">
+    <!-- Top Bar -->
+    <div class="bg-blue-900 text-white py-2 px-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex space-x-4">
+                <span><i class="fas fa-phone-alt mr-2"></i> +1 234 567 890</span>
+                <span><i class="fas fa-envelope mr-2"></i> support@localmart.com</span>
+            </div>
+            <div class="flex space-x-4">
+                <a href="#" class="hover:bg-blue-400"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="hover:bg-blue-600"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="hover:bg-pink-600"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="hover:bg-blue-700"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm py-4">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <div class="flex items-center">
+                <a href="{{ url_for('home') }}" class="text-2xl font-bold text-blue-900 flex items-center">
+                    <i class="fas fa-store mr-2"></i> LocalMart
+                </a>
+            </div>
+            <div class="flex items-center w-full max-w-lg mx-4">
+                <form action="{{ url_for('search') }}" method="GET" class="flex w-full">
+                    <input type="text" name="q" placeholder="Search for products..." class="w-full px-4 py-2 border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-900">
+                    <button type="submit" class="bg-blue-900 text-white px-4 py-2 rounded-r-lg hover:bg-blue-800">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
+            </div>
+            <div class="flex items-center space-x-4 relative">
+                <!--<span id="current-time" class="text-gray-700 text-sm font-medium whitespace-nowrap"></span>-->
+                {% if session.user_id %}
+                    <div class="relative">
+                        <button id="user-menu-button" class="text-gray-700 hover:text-blue-900 focus:outline-none">
+                            <i class="fas fa-user"></i>
+                        </button>
+                        <div id="user-menu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10">
+                            {% if session.role == 'admin' %}
+                                <a href="{{ url_for('admin') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Admin Dashboard</a>
+                                <a href="{{ url_for('signout') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Logout</a>
+                            {% elif session.role == 'seller' %}
+                                {% if is_approved_seller %}
+                                    <a href="{{ url_for('seller_dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Dashboard</a>
+                                {% endif %}
+                                <a href="{{ url_for('account') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Account</a>
+                                <a href="{{ url_for('signout') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Logout</a>
+                            {% else %}
+                                <a href="{{ url_for('account') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Account</a>
+                                <a href="{{ url_for('signout') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Logout</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% if session.role != 'seller' %}
+                        <a href="{{ url_for('cart') }}" class="text-gray-700 hover:text-blue-900 relative">
+                            <i class="fas fa-shopping-cart"></i>
+                            {% if cart_count > 0 %}
+                                <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">{{ cart_count }}</span>
+                            {% endif %}
+                        </a>
+                    {% endif %}
+                {% else %}
+                    <a href="{{ url_for('signin') }}" class="text-gray-700 hover:text-blue-900">Sign In</a>
+                    <a href="{{ url_for('cart') }}" class="text-gray-700 hover:text-blue-900 relative">
+                        <i class="fas fa-shopping-cart"></i>
+                        {% if cart_count > 0 %}
+                            <span class="absolute -top-2 -right-2 bg-blue-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">{{ cart_count }}</span>
+                        {% endif %}
+                    </a>
+                {% endif %}
+                <button class="md:hidden text-gray-700">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="container mx-auto px-4 py-4">
+                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+                    {% for message in messages %}
+                        <p>{{ message }}</p>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Hero Section -->
+    <section class="bg-blue-900 text-white py-16">
+        <div class="container mx-auto px-4 flex flex-col md:flex-row items-center">
+            <div class="md:w-1/2 mb-8 md:mb-0">
+                <h1 class="text-4xl font-bold md:text-5xl mb-4">Shop Local, Support Your Community</h1>
+                <p class="text-xl mb-6">Discover amazing products from sellers in your neighborhood.</p>
+                <div class="flex space-x-4">
+                    <a href="#ftd" class="bg-white text-blue-900 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">Shop Now</a>
+                </div>
+            </div>
+            <div class="md:w-1/2">
+                <img src="https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Local Products" class="w-full h-85 object-cover rounded-lg shadow-lg">
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section id="shp" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12 fade-in">
+                <h2 class="text-3xl font-bold mb-4">Shop by Category</h2>
+                <p class="text-gray-500 max-w-2xl mx-auto">Explore our diverse range of local products across different categories</p>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+                {% for category in categories %}
+                    {% if category != 'Other' %}
+                        <a href="{{ url_for('search', category=category) }}" 
+                           class="category-card bg-gray-50 rounded-xl p-6 text-center hover:bg-blue-900 hover:text-white transition-all duration-300 group fade-in delay-{{ loop.index % 4 }}">
+                            <div class="bg-indigo-100 text-blue-900 w-16 h-16 mx-auto rounded-2xl flex items-center justify-center mb-4 group-hover:bg-white group-hover:text-blue-900 category-icon">
+                                <i class="fas {% if category == 'Fashion' %}fa-tshirt{% elif category == 'Electronics' %}fa-laptop{% elif category == 'Home' %}fa-home{% elif category == 'Food' %}fa-utensils{% elif category == 'Books' %}fa-book-open{% elif category == 'Sports' %}fa-dumbbell{% else %}fa-tag{% endif %} text-2xl"></i>
+                            </div>
+                            <h3 class="font-semibold">{{ category }}</h3>
+                        </a>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Products Section -->
+    <section id="ftd" class="py-12 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-3xl font-bold">Featured Products</h2>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {% for product in products[:4] %}
+                <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
+                    <div class="relative">
+                        <img src="{{ url_for('static', filename='uploads/' + product[4]) }}" alt="{{ product[1] }}" class="w-full h-48 object-cover">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-semibold text-lg mb-1">
+                            <a href="{{ url_for('product_detail', product_id=product[0]) }}" class="text-blue-900 hover:underline">{{ product[1] }}</a>
+                        </h3>
+                        <p class="text-gray-500 text-sm mb-2">by {{ product[5] }}</p>
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <span class="text-blue-900 font-bold">Rs {{ product[3] }}</span>
+                            </div>
+                            {% if session.role != 'seller' %}
+                                <form method="POST" action="{{ url_for('add_to_cart', product_id=product[0]) }}">
+                                    <input type="hidden" name="quantity" value="1">
+                                    <button type="submit" class="bg-blue-900 text-white p-2 rounded-full hover:bg-blue-800 transition">
+                                        <i class="fas fa-shopping-cart"></i>
+                                    </button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Local Sellers Section -->
+    <section class="py-12 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-3xl font-bold">Our Local Sellers</h2>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {% for seller in sellers %}
+                <div class="bg-gray-50 rounded-lg p-6 text-center hover:shadow-md transition">
+                    <img src="{{ url_for('static', filename='uploads/' + (seller[5].split(',')[0] if seller[5] else 'default_seller.jpg')) }}" alt="{{ seller[2] }}" class="w-24 h-24 rounded-full mx-auto mb-4 object-cover">
+                    <h3 class="font-semibold text-lg">{{ seller[2] }}</h3>
+                    <p class="text-gray-500 mb-3">{{ seller[6] }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-16 bg-blue-900 text-white">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-3xl font-bold mb-6">Grow Your Sales Today</h2>
+            <p class="text-xl mb-8 max-w-2xl mx-auto">Be a part of a local Mart. Let’s boost your visibility and conversions!</p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white pt-12 pb-6">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">About LocalMart</h3>
+                    <p class="text-gray-400 mb-4">We connect local sellers with customers, helping small businesses thrive.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="{{ url_for('home') }}" class="text-gray-400 hover:text-white">Home</a></li>
+                        <li><a href="#shp" class="text-gray-400 hover:text-white">Shop</a></li>
+                        <li><a href="{{ url_for('info') }}" class="text-gray-400 hover:text-white">About Us</a></li>
+                        <li><a href="{{ url_for('info') }}" class="text-gray-400 hover:text-white">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Customer Service</h3>
+                    <ul class="space-y-2">
+                        <li><a href="{{ url_for('account') }}" class="text-gray-400 hover:text-white">My Account</a></li>
+                        <li><a href="{{ url_for('info') }}" class="text-gray-400 hover:text-white">Shipping Policy</a></li>
+                        <li><a href="{{ url_for('info') }}" class="text-gray-400 hover:text-white">Returns & Refunds</a></li>
+                        <li><a href="{{ url_for('info') }}" class="text-gray-400 hover:text-white">Terms & Conditions</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <div class="text-left">
+                        <h3 class="text-xl font-bold mb-4">Contact Us</h3>
+                        <ul class="space-y-2 text-gray-400">
+                            <li class="flex items-start">
+                                <i class="fas fa-map-marker-alt mt-1 mr-3"></i>
+                                <span>123 Local Street, Your City, ST 12345</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-phone-alt mr-3"></i>
+                                <span>+1 234 567 890</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-envelope mr-3"></i>
+                                <span>support@localmart.com</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 pt-6 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-400 mb-4 md:mb-0">© 2025 LocalMart. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript for User Dropdown and Time Display -->
+    <script>
+        const userMenuButton = document.getElementById('user-menu-button');
+        const userMenu = document.getElementById('user-menu');
+
+        userMenuButton.addEventListener('click', () => {
+            userMenu.classList.toggle('hidden');
+        });
+
+        document.addEventListener('click', (event) => {
+            if (!userMenuButton.contains(event.target) && !userMenu.contains(event.target)) {
+                userMenu.classList.add('hidden');
+            }
+        });
+
+        // Function to update time
+        function updateTime() {
+            const timeElement = document.getElementById('current-time');
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: true });
+            timeElement.textContent = timeString;
+        }
+
+        // Update time immediately and every second
+        updateTime();
+        setInterval(updateTime, 1000);
+    </script>
+</body>
+</html>

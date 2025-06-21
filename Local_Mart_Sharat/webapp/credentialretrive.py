@@ -15,3 +15,10 @@ for user in users:
 
 # Close the connection
 conn.close()
+
+# -----------------------------------------------------------------------------
+# LocalMart Project - E-commerce Platform
+# Created by Sharat S Unnithan
+# © 2025, LocalMart Development Team. All Rights Reserved.
+# -----------------------------------------------------------------------------
+

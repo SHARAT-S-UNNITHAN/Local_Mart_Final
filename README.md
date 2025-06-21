@@ -30,3 +30,12 @@ Username: Aswapathy Raj, Email: aswapathyachu@gmail.com, Password: Achu123#, Rol
 Username: achu, Email: achuchannelvloger@gmail.com, Password: Achu123#, Role: user
 Username: kalhar, Email: kalhar@gmail.com, Password: Achu123#, Role: seller
 Username: Sha_Enterprises, Email: sharatsunnithan@seller.com, Password: 123456789, Role: seller
+
+
+## Screenshots
+
+!(screenshots/Screenshot 2025-06-21 221154.png)
+
+
+!(screenshots/Screenshot 2025-06-21 221201.png)
+

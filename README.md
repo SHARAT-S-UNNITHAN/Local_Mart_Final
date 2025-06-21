@@ -33,13 +33,10 @@ Username: Sha_Enterprises, Email: sharatsunnithan@seller.com, Password: 12345678
 
 
 ## Screenshots
-## Screenshots
 
-### Homepage
-![Homepage](screenshots/Screenshot%202025-06-21%20221154.png)
+![Intro Page](screenshots/Screenshot%202025-06-21%20221154.png)
 
-### Admin Panel
-![Admin Panel](screenshots/Screenshot%202025-06-21%20221201.png)
+![HomePage](screenshots/Screenshot%202025-06-21%20221201.png)
 
 ### Product Page
 ![Product Page](screenshots/Screenshot%202025-06-21%20221211.png)

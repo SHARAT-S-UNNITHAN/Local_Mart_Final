@@ -38,16 +38,12 @@ Username: Sha_Enterprises, Email: sharatsunnithan@seller.com, Password: 12345678
 
 ![HomePage](screenshots/Screenshot%202025-06-21%20221201.png)
 
-### Product Page
 ![Product Page](screenshots/Screenshot%202025-06-21%20221211.png)
 
-### Cart Page
 ![Cart Page](screenshots/Screenshot%202025-06-21%20221223.png)
 
-### Checkout Page
 ![Checkout Page](screenshots/Screenshot%202025-06-21%20221234.png)
 
-### Order History
 ![Order History](screenshots/Screenshot%202025-06-21%20221253.png)
 
 

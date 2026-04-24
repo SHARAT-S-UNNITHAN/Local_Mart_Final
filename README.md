@@ -1,51 +1,118 @@
-# Local_Mart_Final
-LocalMart is an e-commerce platform designed to connect local sellers with buyers. This guide provides a step-by-step walkthrough for installing, setting up, and using the platform effectively.
+# LocalMart – E-Commerce Platform 🛒
 
-1. Requirements
+LocalMart is a full-stack e-commerce web application designed to connect local sellers with buyers through a simple and user-friendly platform.
 
-System Requirements
+---
 
-Operating System: Windows, macOS, or Linux
+## 🚀 Features
 
-Python Version: 3.8+
+* User authentication (Admin, Seller, Customer)
+* Seller product management system
+* Product browsing and search
+* Shopping cart and checkout system
+* Order tracking and history
+* Admin dashboard for managing users and products
 
-Database: SQLite (default), MySQL, or PostgreSQL (optional for production)
+---
 
-Dependencies: Listed in requirements.txt
+## 🛠️ Requirements
 
-Pre-installed Tools
+### System Requirements
 
-Python 3.x
+* Operating System: Windows, macOS, or Linux
+* Python Version: 3.8+
+* Database: SQLite (default), MySQL / PostgreSQL (optional)
 
-Pip (Python package manager)
+### Pre-installed Tools
 
-Git (optional)
+* Python 3.x
+* Pip
+* Git (optional)
 
-LocalMart is an e-commerce platform designed to connect local sellers with buyers. To set it up, begin by cloning the GitHub repository using the command git clone https://github.com/SHARAT-S-UNNITHAN/Local_Mart_Final.git. Navigate to the project directory and create a virtual environment using python -m venv venv and activate it. Install the dependencies listed in requirements.txt using pip install -r requirements.txt. Initialize the database by running python init_db.py, which creates the necessary tables and seeds default data, including admin credentials (Username: admin, Password: admin123). Start the server with python manage.py runserver and access the application at http://127.0.0.1:8000/. The admin panel is available at http://127.0.0.1:8000/admin, where you can log in using the admin credentials. LocalMart features include seller registration, product management, order tracking, and buyer functionalities like browsing products, adding them to a cart, and placing orders. Admins can approve sellers, manage categories, and oversee orders. For production, use a database like MySQL or PostgreSQL and host on platforms like AWS or Heroku. Ensure sensitive data is stored as environment variables and HTTPS is enabled for security. 
+---
 
+## ⚙️ Installation & Setup
 
-CREDENTIALS ALREADY IN THE PROJECT
-Username: admin, Email: admin@example.com, Password: admin123, Role: admin
-Username: Aswapathy Raj, Email: aswapathyachu@gmail.com, Password: Achu123#, Role: seller
-Username: achu, Email: achuchannelvloger@gmail.com, Password: Achu123#, Role: user
-Username: kalhar, Email: kalhar@gmail.com, Password: Achu123#, Role: seller
-Username: Sha_Enterprises, Email: sharatsunnithan@seller.com, Password: 123456789, Role: seller
+```bash
+git clone https://github.com/SHARAT-S-UNNITHAN/Local_Mart_Final.git
+cd Local_Mart_Final
 
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-## Screenshots
+pip install -r requirements.txt
 
-![Intro Page](screenshots/Screenshot%202025-06-21%20221154.png)
+python init_db.py
+python manage.py runserver
+```
 
-![HomePage](screenshots/Screenshot%202025-06-21%20221201.png)
+Open in browser:
 
-![Product Page](screenshots/Screenshot%202025-06-21%20221211.png)
+```
+http://127.0.0.1:8000/
+```
 
-![Cart Page](screenshots/Screenshot%202025-06-21%20221223.png)
+Admin panel:
 
-![Checkout Page](screenshots/Screenshot%202025-06-21%20221234.png)
+```
+http://127.0.0.1:8000/admin
+```
 
-![Order History](screenshots/Screenshot%202025-06-21%20221253.png)
+---
 
+## 🔐 Demo Access
 
+A default admin account is created during database initialization.
 
+* **Username:** admin
+* **Password:** admin123
 
+⚠️ This is a demo account. It is recommended to change credentials or create new users after setup.
+
+---
+
+## 📸 Screenshots
+
+### Intro Page
+
+![Intro](screenshots/Screenshot%202025-06-21%20221154.png)
+
+### Home Page
+
+![Home](screenshots/Screenshot%202025-06-21%20221201.png)
+
+### Product Page
+
+![Products](screenshots/Screenshot%202025-06-21%20221211.png)
+
+### Cart Page
+
+![Cart](screenshots/Screenshot%202025-06-21%20221223.png)
+
+### Checkout Page
+
+![Checkout](screenshots/Screenshot%202025-06-21%20221234.png)
+
+### Order History
+
+![Orders](screenshots/Screenshot%202025-06-21%20221253.png)
+
+---
+
+## 📌 Project Overview
+
+This project demonstrates my ability to build a full-stack web application with authentication, database integration, and complete e-commerce functionality including user roles and order management.
+
+---
+
+## ⚠️ Notes
+
+* For production use, configure environment variables and secure credentials
+* Use MySQL or PostgreSQL for better scalability
+* Enable HTTPS for secure communication
+
+---
+
+## 👨‍💻 Author
+
+Sharat S Unnithan
